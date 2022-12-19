@@ -1,16 +1,24 @@
 import utime
 from machine import Pin, UART
-from micropyGPS import MicropyGPS
+from NMEA import NMEAparser
 
 gpsModule = UART(0, baudrate=9600, tx=Pin(16), rx=Pin(17))
 print(gpsModule)
 
-buff = bytearray(255)
-gps = MicropyGPS()
+gps = NMEAparser()
 
 while True:
-    gpsModule.readline()
-    buff = str(gpsModule.readline())
-    parts = buff.split(',')
-    print(buff)
+    while char := gpsModule.read(1).decode("ASCII"):
+        if status := gps.update(char):
+            print(
+                status,  # type
+                "lat",  # latitude (ddf)
+                gps.lat,
+                "lng",  # longitude (ddf)
+                gps.lng,
+                "utc time",  # gps packet time
+                gps.utc_time,
+                "fix time",  # system time
+                gps.fix_time,
+            )
     utime.sleep_ms(1000)
