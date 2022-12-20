@@ -7,3 +7,9 @@
 3. Open command pallete by pressing `Ctrl+Shift+P`
 4. Run this command. `Pico-W-Go > Configure Project`
 5. Done.
+
+### Hardware Checks
+
+1. NEO-6M
+   - No blinking - Searching for satellites
+   - Blink every 1 second - Position fix found (Module can "see" enough satelittes)
