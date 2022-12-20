@@ -1,11 +1,11 @@
 import utime
 from machine import Pin, UART
-from micropyGPS import MicropyGPS
+from NMEA import NMEAparser
 
 gpsModule = UART(1, baudrate=9600, tx=Pin(8), rx=Pin(9))
 print(gpsModule)
 
-gps = MicropyGPS()
+gps = NMEAparser()
 
 while True:
     while gpsModule.any():
@@ -17,11 +17,11 @@ while True:
         try:
             data = frame.decode()
             for line in data.splitlines():
-                if line[3:6] in ['RMC', 'GGA']:
+                if line[3:6] in ["RMC", "GGA"]:
                     # Update gps data
                     for x in line:
                         gps.update(x)
-                    print(gps.latitude_string(), ",", gps.longitude_string())
+                    print(gps, gps.lat, gps.lng, gps.utc_time)
 
         except UnicodeError:
             # Soemtimes noise is read which causes UnicodeError during decoding
