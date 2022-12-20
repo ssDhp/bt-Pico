@@ -1,6 +1,6 @@
 ## bt-Pico
 
-### How to run this project?
+### How to setup this project?
 
 1. Install this [extension](https://marketplace.visualstudio.com/items?itemName=paulober.pico-w-go).
 2. Open the project's scripts folder in VS Code
