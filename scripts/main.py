@@ -13,7 +13,7 @@ gps = MicropyGPS()
 # Need to wait for NEO-6M to get position fix
 # For a cold start time to first fix is 30 seconds but it might take longer (depends upon signal strength)
 # So, I recommmed minimum wait time of 60 seconds.
-waitTimeSec = 60
+waitTimeSec = 5  # ! For testing set to 5 seconds, Will remove later
 print(f'Waiting {waitTimeSec} seconds for hardware to initalise.')
 utime.sleep(waitTimeSec)
 
@@ -34,7 +34,15 @@ while True:
                     print(gps.latitude_string(), ",", gps.longitude_string())
 
         except UnicodeError:
-            # ! On startup sometimes "Junk" is read which causes UnicodeError during decoding
-            # ? My best guess is that it is noise but it is also possible that sim800l might be sending some info on startup (most likely in chinese)
-            # TODO: Find out what is going on. Check the junk folder.
+            # ! On startup, when data is read from NEO-6M some hexadecimal characters are in the front of the first NMEA sentence.
+            # ! These characters then cause an Unicode error during decoding
+            # ! This happens only once during the startup and characters are different everytime.
+            # Possible causes:
+            #   - Noise
+            #   - Characters from last time.
+            #   - Some info that module sends on startup.
+            #   - Different encoding
+            #  TODO: Find out what these random characters are? Check "junk" folder for more.
+            # * Updates:
+            # Tried different encodings but only 'unicode_escape' seemed to work. Decoded it in python repl, output was random letter.
             print(frame)
