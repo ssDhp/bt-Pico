@@ -14,8 +14,8 @@ gps = MicropyGPS()
 # For a cold start time to first fix is 30 seconds but it might take longer (depends upon signal strength)
 # So, I recommmed minimum wait time of 60 seconds.
 waitTimeSec = 60
-print(f'Waiting {waitTime} seconds for hardware to initalise.')
-utime.sleep(waitTime)
+print(f'Waiting {waitTimeSec} seconds for hardware to initalise.')
+utime.sleep(waitTimeSec)
 
 while True:
     while gpsModule.any():
