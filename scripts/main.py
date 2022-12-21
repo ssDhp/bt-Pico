@@ -13,7 +13,7 @@ gps = MicropyGPS()
 # Need to wait for NEO-6M to get position fix
 # For a cold start time to first fix is 30 seconds but it might take longer (depends upon signal strength)
 # So, I recommmed minimum wait time of 60 seconds.
-waitTime = 60
+waitTimeSec = 60
 print(f'Waiting {waitTime} seconds for hardware to initalise.')
 utime.sleep(waitTime)
 
