@@ -1,28 +1,47 @@
 import utime
 from machine import Pin, UART
 from NMEA import NMEAparser
+from SIM800L import Modem
 
-gpsModule = UART(1, baudrate=9600, tx=Pin(8), rx=Pin(9))
-print(gpsModule)
-
+uart = UART(1, baudrate=9600, tx=Pin(8), rx=Pin(9))
 gps = NMEAparser()
+pub_key = "pub-c-448b0aed-e6f8-4536-a1e4-f235af33663b"
+sub_key = "sub-c-10e0e350-30c8-4f8c-84dc-659f6954424e"
+channel = "h_bus"
+callback = "myCallback"
+store = 0
+uuid = "pico-test"
+
+# from micropyGPS import MicropyGPS
+
+modem = Modem(
+    MODEM_PWKEY_PIN=None,
+    MODEM_RST_PIN=None,
+    MODEM_POWER_ON_PIN=None,
+    MODEM_TX_PIN=Pin(16),
+    MODEM_RX_PIN=Pin(17),
+)
+
+modem.initialize()
+modem.connect(apn="airtelgprs.com")
+print('\nModem IP address: "{}"'.format(modem.get_ip_addr()))
 
 while True:
-    while gpsModule.any():
-        # Init a byte array to store serial data
-        frame = bytearray(1024)
-        # Store the read data into byte array
-        gpsModule.readinto(frame)
-        # Decode bytearray into string
+    if uart.any():
         try:
-            data = frame.decode()
-            for line in data.splitlines():
-                if line[3:6] in ["RMC", "GGA"]:
-                    # Update gps data
-                    for x in line:
-                        gps.update(x)
-                    print(gps, gps.lat, gps.lng, gps.utc_time)
+            if staus := gps.update((uart.read(1)).decode("ASCII")):
+                payload = (
+                    f"%7B%22lat%22%3A%20{gps.lat}%2C%0A%22lng%22%3A%20{gps.lng}%0A%7D"
+                )
+                base_url = f"https://ps.pndsn.com/publish/{pub_key}/{sub_key}/0/{channel}/{callback}/{payload}?strore={store},uuid={uuid}"
+                # Example GET
+                print("\nNow running demo http GET...")
+                response = modem.http_request(base_url, "GET")
+                print("Response status code:", response.status_code)
+                print("Response content:", response.content)
 
+                utime.sleep(3)
         except UnicodeError:
-            # Soemtimes noise is read which causes UnicodeError during decoding
-            print(frame)
+            pass
+
+modem.disconnect()
