@@ -1,40 +1,31 @@
 import utime
 from machine import Pin, UART
-from micropyGPS import MicropyGPS
+from NMEA import NMEAparser
+from SIM800L import Modem
+from helper import getUrl
 
+# GPS
 gpsModule = UART(1, baudrate=9600, tx=Pin(8), rx=Pin(9))
-print(gpsModule)
-
-gps = MicropyGPS()
-
-# ? What is positon fix?
-# "Position Fix" means that module can communicate with enough satellites to calculate its position.
-
-# Need to wait for NEO-6M to get position fix
-# For a cold start time to first fix is 30 seconds but it might take longer (depends upon signal strength)
-# So, I recommmed minimum wait time of 60 seconds.
-waitTimeSec = 60
-print(f'Waiting {waitTimeSec} seconds for hardware to initalise.')
-utime.sleep(waitTimeSec)
+gpsParserObject = NMEAparser()
+# Led
+picoLed = Pin(25, Pin.OUT)
+# SIM
+simModule = Modem(uart=UART(0, baudrate=9600, tx=Pin(16), rx=Pin(17)))
+simModule.initialize()
+simModule.connect(apn="airtelgprs.com")
+print(f'\nModem IP address: "{simModule.get_ip_addr()}"')
 
 while True:
-    while gpsModule.any():
-        # Init a byte array to store serial data
-        frame = bytearray(1024)
-        # Store the read data into byte array
-        gpsModule.readinto(frame)
-        # Decode bytearray into string
+    if gpsModule.any():
         try:
-            data = frame.decode()
-            for line in data.splitlines():
-                if line[3:6] in ['RMC', 'GGA']:
-                    # Update gps data
-                    for x in line:
-                        gps.update(x)
-                    print(gps.latitude_string(), ",", gps.longitude_string())
-
+            if staus := gpsParserObject.update((gpsModule.read(1)).decode("ASCII")):
+                picoLed.value(1)
+                print("\nNow running GET command")
+                response = simModule.http_request(
+                    getUrl(gpsParserObject.lat, gpsParserObject.lng), "GET"
+                )
+                print("Response status code:", response.status_code)
+                print("Response content:", response.content)
+                picoLed.value(0)
+                utime.sleep(5)
         except UnicodeError:
-            # ! On startup sometimes "Junk" is read which causes UnicodeError during decoding
-            # ? My best guess is that it is noise but it is also possible that sim800l might be sending some info on startup (most likely in chinese)
-            # TODO: Find out what is going on. Check the junk folder.
-            print(frame)
