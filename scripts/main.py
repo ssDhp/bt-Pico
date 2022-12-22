@@ -13,7 +13,7 @@ store = 0
 uuid = "pico-test"
 
 # from micropyGPS import MicropyGPS
-
+led = Pin(25, Pin.OUT)
 modem = Modem(
     MODEM_PWKEY_PIN=None,
     MODEM_RST_PIN=None,
@@ -30,6 +30,7 @@ while True:
     if uart.any():
         try:
             if staus := gps.update((uart.read(1)).decode("ASCII")):
+                led.value(1)
                 payload = (
                     f"%7B%22lat%22%3A%20{gps.lat}%2C%0A%22lng%22%3A%20{gps.lng}%0A%7D"
                 )
@@ -39,8 +40,8 @@ while True:
                 response = modem.http_request(base_url, "GET")
                 print("Response status code:", response.status_code)
                 print("Response content:", response.content)
-
-                utime.sleep(3)
+                led.value(0)
+                utime.sleep(5)
         except UnicodeError:
             pass
 
