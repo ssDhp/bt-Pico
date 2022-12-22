@@ -2,34 +2,6 @@
 import time
 import json
 
-# Setup logging.
-try:
-    import logging
-
-    logger = logging.getLogger(__name__)
-except:
-    try:
-        import logger
-    except:
-
-        class Logger(object):
-            level = "INFO"
-
-            @classmethod
-            def debug(cls, text):
-                if cls.level == "DEBUG":
-                    print("DEBUG:", text)
-
-            @classmethod
-            def info(cls, text):
-                print("INFO:", text)
-
-            @classmethod
-            def warning(cls, text):
-                print("WARN:", text)
-
-        logger = Logger()
-
 
 class GenericATError(Exception):
     print("Errror:", Exception)
@@ -72,8 +44,6 @@ class Modem(object):
 
     def initialize(self):
 
-        logger.debug("Initializing modem...")
-
         if not self.uart:
             from machine import UART, Pin
 
@@ -89,8 +59,6 @@ class Modem(object):
                 if self.MODEM_POWER_ON_PIN
                 else None
             )
-            # MODEM_TX_PIN_OBJ = Pin(self.MODEM_TX_PIN, Pin.OUT) # Not needed as we use MODEM_TX_PIN
-            # MODEM_RX_PIN_OBJ = Pin(self.MODEM_RX_PIN, Pin.IN)  # Not needed as we use MODEM_RX_PIN
 
             # Status setup
             if MODEM_PWKEY_PIN_OBJ:
@@ -111,18 +79,11 @@ class Modem(object):
             except:
                 retries += 1
                 if retries < 3:
-                    logger.debug(
-                        "Error in getting modem info, retrying.. (#{})".format(retries)
-                    )
                     time.sleep(3)
                 else:
                     raise
             else:
                 break
-
-        logger.debug(
-            'Ok, modem "{}" is ready and accepting commands'.format(self.modem_info)
-        )
 
         # Set initialized flag and support vars
         self.initialized = True
@@ -140,7 +101,7 @@ class Modem(object):
             "modeminfo": {"string": "ATI", "timeout": 3, "end": "OK"},
             "fwrevision": {"string": "AT+CGMR", "timeout": 3, "end": "OK"},
             "battery": {"string": "AT+CBC", "timeout": 3, "end": "OK"},
-            "scan": {"string": "AT+COPS=?", "timeout": 60, "end": "OK"},
+            "scan": {"string": "AT+COPS=?", "timeout": 3, "end": "OK"},
             "network": {"string": "AT+COPS?", "timeout": 3, "end": "OK"},
             "signal": {"string": "AT+CSQ", "timeout": 3, "end": "OK"},
             "checkreg": {"string": "AT+CREG?", "timeout": 3, "end": None},
@@ -206,7 +167,6 @@ class Modem(object):
 
         # Execute the AT command
         command_string_for_at = f"{command_string}\r\n"
-        logger.debug(f'Writing AT command "{command_string_for_at.encode("utf-8")}"')
         self.uart.write(command_string_for_at)
 
         # Support vars
@@ -227,7 +187,6 @@ class Modem(object):
                     # logger.warning('Timeout for command "{}" (timeout={})'.format(command, timeout))
                     # break
             else:
-                logger.debug(f'Read "{line}"')
 
                 # Convert line to string
                 line_str = line.decode("utf-8")
@@ -238,19 +197,14 @@ class Modem(object):
 
                 # If we had a pre-end, do we have the expected end?
                 if line_str == f"{excpected_end}\r\n":
-                    logger.debug("Detected exact end")
                     break
                 if pre_end and line_str.startswith(f"{excpected_end}"):
-                    logger.debug(
-                        "Detected startwith end (and adding this line to the output too)"
-                    )
                     output += line_str
                     break
 
                 # Do we have a pre-end?
                 if line_str == "\r\n":
                     pre_end = True
-                    logger.debug("Detected pre-end")
                 else:
                     pre_end = False
 
@@ -278,8 +232,6 @@ class Modem(object):
                 output = output[1:]
             if output.endswith("\n"):
                 output = output[:-1]
-
-        logger.debug(f'Returning "{output.encode("utf8")}"')
 
         # Return
         return output
@@ -356,28 +308,23 @@ class Modem(object):
 
         # Are we already connected?
         if self.get_ip_addr():
-            logger.debug("Modem is already connected, not reconnecting.")
             return
 
         # Closing bearer if left opened from a previous connect gone wrong:
-        logger.debug("Trying to close the bearer in case it was left open somehow..")
         try:
             self.execute_at_command("closebear")
         except GenericATError:
             pass
 
         # First, init gprs
-        logger.debug("Connect step #1 (initgprs)")
         self.execute_at_command("initgprs")
 
         # Second, set the APN
-        logger.debug("Connect step #2 (setapn)")
         self.execute_at_command("setapn", apn)
         # self.execute_at_command("setuser", user)
         # self.execute_at_command("setpwd", pwd)
 
         # Then, open the GPRS connection.
-        logger.debug("Connect step #3 (opengprs)")
         self.execute_at_command("opengprs")
 
         # Ok, now wait until we get a valid IP address
@@ -392,7 +339,6 @@ class Modem(object):
                     raise Exception(
                         "Cannot connect modem as could not get a valid IP address"
                     )
-                logger.debug("No valid IP address yet, retrying... (#")
                 time.sleep(1)
             else:
                 break
@@ -426,25 +372,20 @@ class Modem(object):
             raise Exception("Error, modem is not connected")
 
         # Close the http context if left open somehow
-        logger.debug("Close the http context if left open somehow...")
         try:
             self.execute_at_command("closehttp")
         except GenericATError:
             pass
 
         # First, init and set http
-        logger.debug("Http request step #1.1 (inithttp)")
         self.execute_at_command("inithttp")
-        logger.debug("Http request step #1.2 (sethttp)")
         self.execute_at_command("sethttp")
 
         # Do we have to enable ssl as well?
         if self.ssl_available:
             if url.startswith("https://"):
-                logger.debug("Http request step #1.3 (enablessl)")
                 self.execute_at_command("enablessl")
             elif url.startswith("http://"):
-                logger.debug("Http request step #1.3 (disablessl)")
                 self.execute_at_command("disablessl")
         else:
             if url.startswith("https://"):
@@ -453,43 +394,31 @@ class Modem(object):
                 )
 
         # Second, init and execute the request
-        logger.debug("Http request step #2.1 (initurl)")
         self.execute_at_command("initurl", data=url)
 
         if mode == "GET":
 
-            logger.debug("Http request step #2.2 (doget)")
             output = self.execute_at_command("doget")
             response_status_code = output.split(",")[1]
-            logger.debug(f'Response status code: "{response_status_code}"')
 
         elif mode == "POST":
 
-            logger.debug("Http request step #2.2 (setcontent)")
             self.execute_at_command("setcontent", content_type)
 
-            logger.debug("Http request step #2.3 (postlen)")
             self.execute_at_command("postlen", len(data))
 
-            logger.debug("Http request step #2.4 (dumpdata)")
             self.execute_at_command("dumpdata", data)
 
-            logger.debug("Http request step #2.5 (dopost)")
             output = self.execute_at_command("dopost")
             response_status_code = output.split(",")[1]
-            logger.debug(f'Response status code: "{response_status_code}"')
 
         else:
             raise Exception(f'Unknown mode "{mode}"')
 
         # Third, get data
-        logger.debug("Http request step #4 (getdata)")
         response_content = self.execute_at_command("getdata", clean_output=False)
 
-        logger.debug(response_content)
-
         # Then, close the http context
-        logger.debug("Http request step #4 (closehttp)")
         self.execute_at_command("closehttp")
 
         return Response(status_code=response_status_code, content=response_content)
