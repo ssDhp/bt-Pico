@@ -1,5 +1,11 @@
 ## bt-Pico
 
+### TO DO:
+
+1. Add a hardware reset and a software reset
+2. Refactor code
+3. Redo website
+
 ### How to setup this project?
 
 1. Install this [extension](https://marketplace.visualstudio.com/items?itemName=paulober.pico-w-go).
@@ -10,6 +16,12 @@
 
 ### Hardware Checks
 
+Check LEDs on modules to see if modules are working correctly
+
 1. NEO-6M
    - No blinking - Searching for satellites
    - Blink every 1 second - Position fix found (Module can "see" enough satelittes)
+2. SIM800L
+   - Blink every 1s - Module is seaching for a network
+   - Blink every 2s - Data connection is active
+   - Blink every 3s - Module is connected to a network and can receive/send

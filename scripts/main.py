@@ -40,6 +40,11 @@ while True:
                 print("Response Code:", response.status_code)
                 print("Response:", response.content)
                 picoLed.value(0)
+                if response.status_code == 200:
+                    sleep(0.3)
+                    picoLed.toggle()
+                    sleep(0.3)
+                    picoLed.toggle()
                 sleep(5)
         except UnicodeError:
             pass
