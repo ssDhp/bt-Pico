@@ -34,4 +34,3 @@ while True:
                 picoLed.value(0)
                 utime.sleep(5)
         except UnicodeError:
-            pass
