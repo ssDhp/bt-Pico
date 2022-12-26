@@ -1,4 +1,14 @@
-## bt-Pico
+## [WIP] bt-Pico - GPS Tracker
+
+---
+
+GPS Tracker updates its location on the website.
+
+Components used:
+
+- Raspberry Pi Pico (Microcontroller): Controls other two modules
+- NEO-6M (GPS module): Gets current location
+- SIM800L (GSM/GPRS module): Sends location to the website
 
 ### How to setup this project?
 
