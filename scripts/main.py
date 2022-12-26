@@ -22,7 +22,12 @@ while True:
                 picoLed.value(1)
                 print("\nNow running GET command")
                 response = simModule.http_request(
-                    getUrl(gpsParserObject.lat, gpsParserObject.lng), "GET"
+                    getUrl(
+                        gpsParserObject.lat,
+                        gpsParserObject.lng,
+                        gpsParserObject.utc_time,
+                    ),
+                    "GET",
                 )
                 print("Response status code:", response.status_code)
                 print("Response content:", response.content)

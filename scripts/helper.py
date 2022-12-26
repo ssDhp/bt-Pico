@@ -6,6 +6,6 @@ store = 0
 uuid = "pico-test"
 
 
-def getUrl(lat: float, lng: float):
-    payload = f"%7B%22lat%22%3A%20{lat}%2C%0A%22lng%22%3A%20{lng}%0A%7D"
+def getUrl(lat: float, lng: float, utc: float):
+    payload = f"%7B%22lat%22%3A%20{lat}%2C%0A%22lng%22%3A%20{lng}%2C%0A%22utc%22%3A%20{utc}%0A%7D"
     return f"https://ps.pndsn.com/publish/{pub_key}/{sub_key}/0/{channel}/{callback}/{payload}?strore={store},uuid={uuid}"
