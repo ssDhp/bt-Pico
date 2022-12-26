@@ -9,5 +9,8 @@
         ".vscode\\Pico-W-Stub\\stubs"
     ],
     "picowgo.syncFolder": "",
-    "picowgo.openOnStart": true
+    "picowgo.openOnStart": true,
+    "githubPullRequests.ignoredPullRequestBranches": [
+        "master"
+    ]
 }
