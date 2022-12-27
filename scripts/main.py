@@ -34,14 +34,14 @@ while True:
         picoLed.value(1)
         try:
             print("Now running GET command")
+            url = getUrl(gpsParserObject.lat, gpsParserObject.lng, gpsParserObject.utc_time)
             t = time.ticks_ms()
-
-            response = simModule.http_request(getUrl(gpsParserObject.lat, gpsParserObject.lng, gpsParserObject.utc_time), "GET",)
+            response = simModule.http_request(url, "GET",)
             print(f"Time taken to make the  request:{time.ticks_diff(time.ticks_ms(),t)/1000} sec")
             print("Response status code:", response.status_code)
             print("Response content:", response.content)
-        except Exception:
-            print("Request Failed!")
+        except Exception as error:
+            print("Request Failed!", error)
             pass
         picoLed.value(0)
         # Blink if request was sucessfull
