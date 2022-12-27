@@ -32,6 +32,12 @@ while True:
                 print("Response status code:", response.status_code)
                 print("Response content:", response.content)
                 picoLed.value(0)
+                # Blink if request was sucessfull
+                if response.status_code == 200:
+                    utime.sleep(0.3)
+                    picoLed.toggle()
+                    utime.sleep(0.3)
+                    picoLed.toggle()
                 utime.sleep(5)
         except UnicodeError:
             pass

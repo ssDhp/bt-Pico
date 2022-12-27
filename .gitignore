@@ -1,2 +1,4 @@
 .vscode/*
 test/*
+scripts/.vscode/*
+scripts/.picowgo
