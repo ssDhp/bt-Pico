@@ -1,6 +1,7 @@
 pub_key = "pub-c-448b0aed-e6f8-4536-a1e4-f235af33663b"
 sub_key = "sub-c-10e0e350-30c8-4f8c-84dc-659f6954424e"
-channel = "h_bus"
+busNo = "H"
+channel = "bus_" + busNo
 callback = "myCallback"
 store = 0
 uuid = "pico-test"
