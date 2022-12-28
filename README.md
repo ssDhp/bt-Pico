@@ -8,6 +8,8 @@ Components used:
 - NEO-6M (GPS module): Gets current location
 - SIM800L (GSM/GPRS module): Sends location to the website
 
+![Drawing Diagram](/schematic/Bt-Pico.png)
+
 ### How to setup this project?
 
 1. Install this [extension](https://marketplace.visualstudio.com/items?itemName=paulober.pico-w-go).
