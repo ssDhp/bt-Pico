@@ -287,12 +287,6 @@ class NMEAparser(object):
         "GPRMC": gprmc,
         "GLRMC": gprmc,
         "GNRMC": gprmc,
-        "GPGGA": gpgga,
-        "GLGGA": gpgga,
-        "GNGGA": gpgga,
-        "GPGLL": gpgll,
-        "GLGLL": gpgll,
-        "GNGLL": gpgll,
     }
 
 
