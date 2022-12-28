@@ -1,7 +1,5 @@
 ## [WIP] bt-Pico - GPS Tracker
 
----
-
 GPS Tracker updates its location on the website.
 
 Components used:
@@ -31,8 +29,6 @@ Check LEDs on modules to see if modules are working correctly
    - Blink every 3s - Module is connected to a network and can receive/send
 
 ## NEMA Sentences
-
----
 
 Format for a NEMA Sentence
 
