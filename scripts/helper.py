@@ -21,6 +21,9 @@ class envConfig(object):
             return value
 
 
+# Environment Vraiables
+env = envConfig()
+
 busNo = "H"
 channel = "bus_" + busNo
 uuid = "pico-test"

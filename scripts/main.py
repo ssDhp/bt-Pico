@@ -3,10 +3,9 @@ import time
 from machine import Pin, UART
 from NMEA import NMEAparser
 from SIM800L import Modem
-from helper import envConfig, getUrl
+from helper import env, getUrl
 
-# Environment Vraiables
-env = envConfig()
+
 # Led
 picoLed = Pin(env.pico.led, Pin.OUT)
 # SIM reset pulled high
