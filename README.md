@@ -1,6 +1,6 @@
 ## [WIP] bt-Pico - GPS Tracker
 
-![v2 image](/schematic/v2image.jpg)
+![v2 image](/schematic/imagev2.jpg)
 GPS Tracker updates its location on the website.
 
 Components used:
