@@ -16,5 +16,9 @@
             "rst": 10
         },
         "led": 25
+    },
+    "id": {
+        "uuid": "pico-device-2",
+        "busNo": "D"
     }
 }
