@@ -18,19 +18,7 @@ class Modem(object):
     def __init__(
         self,
         uart=None,
-        MODEM_PWKEY_PIN=None,
-        MODEM_RST_PIN=None,
-        MODEM_POWER_ON_PIN=None,
-        MODEM_TX_PIN=None,
-        MODEM_RX_PIN=None,
     ):
-
-        # Pins
-        self.MODEM_PWKEY_PIN = MODEM_PWKEY_PIN
-        self.MODEM_RST_PIN = MODEM_RST_PIN
-        self.MODEM_POWER_ON_PIN = MODEM_POWER_ON_PIN
-        self.MODEM_TX_PIN = MODEM_TX_PIN
-        self.MODEM_RX_PIN = MODEM_RX_PIN
 
         # Uart
         self.uart = uart
@@ -43,33 +31,6 @@ class Modem(object):
     # ----------------------
 
     def initialize(self):
-
-        if not self.uart:
-            from machine import UART, Pin
-
-            # Pin initialization
-            MODEM_PWKEY_PIN_OBJ = (
-                Pin(self.MODEM_PWKEY_PIN, Pin.OUT) if self.MODEM_PWKEY_PIN else None
-            )
-            MODEM_RST_PIN_OBJ = (
-                Pin(self.MODEM_RST_PIN, Pin.OUT) if self.MODEM_RST_PIN else None
-            )
-            MODEM_POWER_ON_PIN_OBJ = (
-                Pin(self.MODEM_POWER_ON_PIN, Pin.OUT)
-                if self.MODEM_POWER_ON_PIN
-                else None
-            )
-
-            # Status setup
-            if MODEM_PWKEY_PIN_OBJ:
-                MODEM_PWKEY_PIN_OBJ.value(0)
-            if MODEM_RST_PIN_OBJ:
-                MODEM_RST_PIN_OBJ.value(1)
-            if MODEM_POWER_ON_PIN_OBJ:
-                MODEM_POWER_ON_PIN_OBJ.value(1)
-
-            # Setup UART
-            self.uart = UART(0, 9600, rx=self.MODEM_RX_PIN, tx=self.MODEM_TX_PIN)
 
         # Test AT commands
         retries = 0
@@ -125,7 +86,7 @@ class Modem(object):
                 "timeout": 3,
                 "end": "OK",
             },  # Appeared on hologram net here or below
-            "opengprs": {"string": "AT+SAPBR=1,1", "timeout": 30, "end": "OK"},
+            "opengprs": {"string": "AT+SAPBR=1,1", "timeout": 5, "end": "OK"},
             "getbear": {"string": "AT+SAPBR=2,1", "timeout": 3, "end": "OK"},
             "inithttp": {"string": "AT+HTTPINIT", "timeout": 3, "end": "OK"},
             "sethttp": {"string": 'AT+HTTPPARA="CID",1', "timeout": 3, "end": "OK"},
@@ -140,6 +101,11 @@ class Modem(object):
             "doget": {"string": "AT+HTTPACTION=0", "timeout": 30, "end": "+HTTPACTION"},
             "setcontent": {
                 "string": f'AT+HTTPPARA="CONTENT","{data}"',
+                "timeout": 3,
+                "end": "OK",
+            },
+            "setuserdata": {
+                "string": f'AT+HTTPPARA="USERDATA","{data}"',
                 "timeout": 3,
                 "end": "OK",
             },
@@ -187,35 +153,37 @@ class Modem(object):
                     # logger.warning('Timeout for command "{}" (timeout={})'.format(command, timeout))
                     # break
             else:
+                try:
+                    # Convert line to string
+                    line_str = line.decode("utf-8")
 
-                # Convert line to string
-                line_str = line.decode("utf-8")
+                    # Do we have an error?
+                    if line_str == "ERROR\r\n":
+                        raise GenericATError("Got generic AT error")
 
-                # Do we have an error?
-                if line_str == "ERROR\r\n":
-                    raise GenericATError("Got generic AT error")
+                    # If we had a pre-end, do we have the expected end?
+                    if line_str == f"{excpected_end}\r\n":
+                        break
+                    if pre_end and line_str.startswith(f"{excpected_end}"):
+                        output += line_str
+                        break
 
-                # If we had a pre-end, do we have the expected end?
-                if line_str == f"{excpected_end}\r\n":
-                    break
-                if pre_end and line_str.startswith(f"{excpected_end}"):
-                    output += line_str
-                    break
+                    # Do we have a pre-end?
+                    if line_str == "\r\n":
+                        pre_end = True
+                    else:
+                        pre_end = False
 
-                # Do we have a pre-end?
-                if line_str == "\r\n":
-                    pre_end = True
-                else:
-                    pre_end = False
+                    # Keep track of processed lines and stop if exceeded
+                    processed_lines += 1
 
-                # Keep track of processed lines and stop if exceeded
-                processed_lines += 1
-
-                # Save this line unless in particular conditions
-                if command == "getdata" and line_str.startswith("+HTTPREAD:"):
-                    pass
-                else:
-                    output += line_str
+                    # Save this line unless in particular conditions
+                    if command == "getdata" and line_str.startswith("+HTTPREAD:"):
+                        pass
+                    else:
+                        output += line_str
+                except:
+                    return line
 
         # Remove the command string from the output
         output = output.replace(command_string + "\r\r\n", "")
@@ -289,6 +257,9 @@ class Modem(object):
 
     def get_ip_addr(self):
         output = self.execute_at_command("getbear")
+        if output.startswith("ERROR"):
+            raise Exception("Error")
+
         output = output.split("+")[
             -1
         ]  # Remove potential leftovers in the buffer before the "+SAPBR:" response
@@ -402,6 +373,11 @@ class Modem(object):
             response_status_code = output.split(",")[1]
 
         elif mode == "POST":
+
+            self.execute_at_command(
+                "setuserdata",
+                "Authorization:Basic cWNnRW9RLnlLZDBtUTpXcm1Rc2ZJOC1OYVhwTWVCTzVXZTA5NG1fN2paTTN3b1UxWXMtQUVmUDdn",
+            )
 
             self.execute_at_command("setcontent", content_type)
 
