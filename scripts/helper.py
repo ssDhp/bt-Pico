@@ -23,12 +23,9 @@ class envConfig(object):
 
 # Environment Vraiables
 env = envConfig()
-
-busNo = "H"
-channel = "bus_" + busNo
-uuid = "pico-test"
+channel = "bus_" + env.id.busNo
 
 
 def getUrl(lat: float, lng: float, utc: float):
     payload = f"%7B%22lat%22%3A%20{lat}%2C%0A%22lng%22%3A%20{lng}%2C%0A%22utc%22%3A%20{utc}%0A%7D"
-    return f"http://ps.pndsn.com/signal/{env.pubnub.publishKey}/{env.pubnub.subscribeKey}/0/{channel}/0/{payload}?uuid={uuid}"
+    return f"http://ps.pndsn.com/publish/{env.pubnub.publishKey}/{env.pubnub.subscribeKey}/0/{channel}/0/{payload}?uuid={env.id.uuid}"
