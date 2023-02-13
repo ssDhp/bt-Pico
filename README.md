@@ -2,8 +2,7 @@
 
 ## TO DO:
 
-- Update test.py oled test
-- Update main.py type error
+- Refactor
 
 ![v2 image](/schematic/imagev2.jpg)
 GPS Tracker updates its location on the website.
