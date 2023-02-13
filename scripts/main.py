@@ -1,11 +1,13 @@
-print("Booting...")
 import utime
 import time
 from machine import Pin, UART
 from NMEA import NMEAparser
 from SIM800L import Modem
 from helper import env, getUrl
+import oled
 
+
+oled.display("Bt-Pico MK-IV \n Booting... ")
 
 # Led
 picoLed = Pin(env.pico.led, Pin.OUT)
@@ -33,9 +35,9 @@ while True:
         simModule.connect(apn="airtelgprs.net")
         break
     except Exception as e:
-        print("Unable to connect to internet, retrying...", e)
+        oled.display("Unable to connect to internet, retrying...", e)
 
-print(f'\nModem IP address: "{simModule.get_ip_addr()}"')
+oled.display(f'\nModem IP address: "{simModule.get_ip_addr()}"')
 
 # Blink if modem ready
 picoLed.toggle()
@@ -47,12 +49,12 @@ while True:
         try:
             if staus := gpsParserObject.update((gpsModule.read(1)).decode("ASCII")):
                 if gpsParserObject.lat and gpsParserObject.lng:
-                    print(
+                    oled.display(
                         f"\nLat: {gpsParserObject.lat}, Long: {gpsParserObject.lng}, UTC: {gpsParserObject.utc_time}"
                     )
                     try:
                         picoLed.value(1)
-                        print("Now making HTTP GET request")
+                        oled.display("Now making HTTP GET request")
                         t = time.ticks_ms()
                         response = simModule.http_request(
                             getUrl(
@@ -63,7 +65,7 @@ while True:
                             "GET",
                         )
 
-                        print(
+                        oled.display(
                             f"Time taken to make the request: {time.ticks_diff(time.ticks_ms(),t)/1000} sec"
                         )
                         print("Response code:", response.status_code)
@@ -75,7 +77,8 @@ while True:
                             utime.sleep(0.3)
                             picoLed.toggle()
                     except Exception as error:
-                        print("Request Failed!", error)
+                        oled.display("Request Failed!")
+                        print(error)
                         pass
         except UnicodeError:
             pass
