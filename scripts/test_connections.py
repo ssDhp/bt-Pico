@@ -50,7 +50,7 @@ from ssd1306 import SSD1306_I2C
 # ! TO DO: Update this
 try: 
     pix_res_x  = 128 # SSD1306 horizontal resolution
-    pix_res_y = 64   # SSD1306 vertical resolution
+    pix_res_y = 32   # SSD1306 vertical resolution
 
     i2c_dev = I2C(1,scl=Pin(15),sda=Pin(14),freq=200000)  # start I2C on I2C1 (GPIO 26/27)
     i2c_addr = [hex(ii) for ii in i2c_dev.scan()] # get I2C address in hex format
