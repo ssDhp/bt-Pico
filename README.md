@@ -4,7 +4,7 @@
 
 - Refactor
 
-![v2 image](/schematic/imagev2.jpg)
+![v2 image](/img/imagev2.jpg)
 GPS Tracker updates its location on the website.
 
 Components used:
@@ -13,11 +13,11 @@ Components used:
 - NEO-6M (GPS module): Gets current location
 - SIM800L (GSM/GPRS module): Sends location to the website
 
-![Drawing Diagram](/schematic/Bt-Pico.png)
+![Drawing Diagram](/img/Bt-Pico.png)
 
 ### Working
 
-![Working Diagram](/schematic/working.png)
+![Working Diagram](/img/working.png)
 
 ### How to setup this project?
 
