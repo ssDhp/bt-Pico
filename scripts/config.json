@@ -1,0 +1,51 @@
+{
+    "pubnub": {
+        "pk": "pub-c-448b0aed-e6f8-4536-a1e4-f235af33663b",
+        "sk": "sub-c-10e0e350-30c8-4f8c-84dc-659f6954424e"
+    },
+    "id": {
+        "uuid": "pico-mark-4",
+        "busNo": "H"
+    },
+    "hardware": {
+        "gps": {
+            "pin": {
+                "uart": 0,
+                "tx": 0,
+                "rx": 1
+            }
+        },
+        "sim": {
+            "pin": {
+                "uart": 1,
+                "tx": 8,
+                "rx": 9,
+                "rst": 10,
+                "baudrate": 9600
+            }
+        },
+        "oled": {
+            "pin": {
+                "i2c": 1,
+                "scl": 15,
+                "sda": 14,
+                "frequency": 200000
+            },
+            "resolution": {
+                "width": 128,
+                "height": 32
+            }
+        },
+        "imu": {
+            "pin": {
+                "i2c": 0,
+                "scl": 17,
+                "sda": 16,
+                "frequency": 400000
+            }
+        },
+        "led": {
+            "pin": 25
+        }
+    }
+}
