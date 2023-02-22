@@ -1,17 +1,23 @@
 ## [WIP] bt-Pico - GPS Tracker
 
+---
+
 ## TO DO:
 
 - Refactor
 
+---
+
 ![v2 image](/img/imagev2.jpg)
-GPS Tracker updates its location on the website.
+GPS Tracker updates its location on the website [here](https://mg-lsj.github.io/Bus-Tracker/).
 
 Components used:
 
 - Raspberry Pi Pico (Microcontroller): Controls other two modules
 - NEO-6M (GPS module): Gets current location
 - SIM800L (GSM/GPRS module): Sends location to the website
+
+### Wiring Diagram
 
 ![Drawing Diagram](/img/Bt-Pico.png)
 
@@ -42,4 +48,4 @@ Check LEDs on modules to see if modules are working correctly
    - Blink every 2s - Data connection is active
    - Blink every 3s - Module is connected to a network and can receive/send
 
-Now, run `test.py` to check connections.
+Now, run `test_connections.py` to check connections.
