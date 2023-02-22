@@ -45,7 +45,6 @@ def display(
     except Exception as e:
         print("Display exception", e)
 
-
 # LED
 try:
     led_state = 1
@@ -61,6 +60,7 @@ except Exception as e:
 # OLED Screen
 last_display = ""
 try:
+
     oled_state = 1
     oled = SSD1306_I2C(
         width=env.hardware.oled.resolution.width,  # 128
