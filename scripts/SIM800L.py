@@ -4,7 +4,6 @@ import json
 
 
 class GenericATError(Exception):
-    print("Errror:", Exception)
     pass
 
 
@@ -115,7 +114,11 @@ class Modem(object):
                 "end": "DOWNLOAD",
             },  # "data" is data_lenght in this context, while 5000 is the timeout
             "dumpdata": {"string": data, "timeout": 1, "end": "OK"},
-            "dopost": {"string": "AT+HTTPACTION=1", "timeout": 30, "end": "+HTTPACTION"},
+            "dopost": {
+                "string": "AT+HTTPACTION=1",
+                "timeout": 30,
+                "end": "+HTTPACTION",
+            },
             "getdata": {"string": "AT+HTTPREAD", "timeout": 3, "end": "OK"},
             "closehttp": {"string": "AT+HTTPTERM", "timeout": 3, "end": "OK"},
             "closebear": {"string": "AT+SAPBR=0,1", "timeout": 3, "end": "OK"},
@@ -398,3 +401,7 @@ class Modem(object):
         self.execute_at_command("closehttp")
 
         return Response(status_code=response_status_code, content=response_content)
+
+
+if __name__ == "__main__":
+    pass
