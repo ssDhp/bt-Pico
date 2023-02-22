@@ -2,7 +2,7 @@ import utime
 from machine import Pin, UART, I2C
 from NMEA import NMEAparser
 from SIM800L import Modem
-from helper import env, getUrl
+from helper import env, httpGetUrl, crashUrl
 from imu import MPU6050
 from ssd1306 import SSD1306_I2C
 import _thread
@@ -149,6 +149,7 @@ def check_crash():
             az = round(imu.accel.z, 2)
             if ax >= 2 or ay >= 5 or az >= 5:
                 crash = (ax, ay, az)
+                break
         except Exception as e:
             print("IMU Error:", e)
             pass
@@ -174,29 +175,36 @@ while True:
 display(f"\nIP address: \n\n{simModule.get_ip_addr()}")
 ledBlink(3, 0.3)
 
+lat = 0
+lng = 0
+utc = 0
+
 while True:
     if gpsModule.any():
         try:
             if staus := gpsParserObject.update((gpsModule.read(1)).decode("ASCII")):
                 if gpsParserObject.lat and gpsParserObject.lng:
+                    lat = gpsParserObject.lat
+                    lng = gpsParserObject.lng
+                    utc = gpsParserObject.utc_time
 
                     try:
                         display(
-                            text=f"HTTP GET\nLat: {gpsParserObject.lat}\nLng: {gpsParserObject.lng}\nUTC: {gpsParserObject.utc_time}",
+                            text=f"HTTP GET\nLat: {lat}\nLng: {lng}\nUTC: {utc}",
                             overflow="eol",
                         )
                         picoLed.value(1)
                         t = utime.ticks_ms()
                         response = simModule.http_request(
-                            getUrl(
-                                gpsParserObject.lat,
-                                gpsParserObject.lng,
-                                gpsParserObject.utc_time,
+                            httpGetUrl(
+                                lat,
+                                lng,
+                                utc,
                             ),
                             "GET",
                         )
                         display(
-                            f"Status Code: {response.status_code}\nTime Delta: {utime.ticks_diff(utime.ticks_ms(),t)/1000} s"
+                            f"Status Code: {response.status_code}\n\nTime Delta:\n{utime.ticks_diff(utime.ticks_ms(),t)/1000} s"
                         )
                         print("Response:", response.content)
                         # Blink if request was sucessfull
@@ -218,4 +226,25 @@ while True:
         finally:
             picoLed.value(0)
     if crash:
-        display("Crash Detected!!")
+        try:
+            display("Crash Detected!!")
+            picoLed.value(1)
+            t = utime.ticks_ms()
+            print("Trying to upload crash data...")
+            response = simModule.http_request(
+                crashUrl(
+                    lat,
+                    lng,
+                    utc,
+                ),
+                "GET",
+            )
+            display(
+                f"Status Code: {response.status_code}\n\nTime Delta:\n{utime.ticks_diff(utime.ticks_ms(),t)/1000} s"
+            )
+            print("Response:", response.content)
+            picoLed.value(0)
+            break
+        except Exception as e:
+            print(e)
+            break
