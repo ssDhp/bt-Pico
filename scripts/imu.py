@@ -373,13 +373,14 @@ class MPU6050(object):
         self._gyro._ivector[0] = bytes_toint(self.buf6[0], self.buf6[1])
         self._gyro._ivector[1] = bytes_toint(self.buf6[2], self.buf6[3])
         self._gyro._ivector[2] = bytes_toint(self.buf6[4], self.buf6[5])
-=======
+
 # imu.py MicroPython driver for the InvenSense inertial measurement units
 # This is the base class
 # Adapted from Sebastian Plamauer's MPU9150 driver:
 # https://github.com/micropython-IMU/micropython-mpu9150.git
 # Authors Peter Hinch, Sebastian Plamauer
 # V0.2 17th May 2017 Platform independent: utime and machine replace pyb
+
 
 '''
 mpu9250 is a micropython module for the InvenSense MPU9250 sensor.
@@ -412,10 +413,6 @@ THE SOFTWARE.
 # Error handling: on code used for initialisation, abort with message
 # At runtime try to continue returning last good data value. We don't want aircraft
 # crashing. However if the I2C has crashed we're probably stuffed.
-
-from utime import sleep_ms
-from machine import I2C
-from vector3d import Vector3d
 
 
 class MPUException(OSError):

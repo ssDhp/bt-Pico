@@ -5,7 +5,7 @@
     },
     "id": {
         "uuid": "pico-mark-4",
-        "busNo": "H"
+        "busNo": "D"
     },
     "hardware": {
         "gps": {
