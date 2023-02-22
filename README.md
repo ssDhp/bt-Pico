@@ -1,17 +1,12 @@
 ## [WIP] bt-Pico - GPS Tracker
 
----
-
-## TO DO:
-
+### TO DO:
 - Refactor
-
----
 
 ![v2 image](/img/imagev2.jpg)
 GPS Tracker updates its location on the website [here](https://mg-lsj.github.io/Bus-Tracker/).
 
-Components used:
+### Components used:
 
 - Raspberry Pi Pico (Microcontroller): Controls other two modules
 - NEO-6M (GPS module): Gets current location
