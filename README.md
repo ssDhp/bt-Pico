@@ -1,7 +1,9 @@
 ## [WIP] bt-Pico - GPS Tracker
 
 ### TO DO:
+- Debug PCB
 - Refactor
+
 
 ![v2 image](/img/imagev2.jpg)
 GPS Tracker updates its location on the website [here](https://mg-lsj.github.io/Bus-Tracker/).
