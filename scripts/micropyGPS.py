@@ -1,10 +1,12 @@
-try:
-    import utime
-except ImportError:
-    import time
+"""
+Modified NMEA parser 
+Original File: https://github.com/inmcm/micropyGPS/blob/master/micropyGPS.py
+"""
+
+import utime
 
 
-class NMEAparser(object):
+class MicropyGPS(object):
     """GPS NMEA Sentence Parser. Creates object that stores all relevant GPS data and statistics.
     Parses sentences one character at a time using update()."""
 

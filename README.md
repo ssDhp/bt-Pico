@@ -1,8 +1,4 @@
-## [WIP] bt-Pico - GPS Tracker
-
-### TO DO:
-- Debug PCB
-- Refactor
+## bt-Pico - GPS Tracker
 
 
 ![v2 image](/img/imagev2.jpg)
@@ -16,7 +12,7 @@ GPS Tracker updates its location on the website [here](https://mg-lsj.github.io/
 
 ### Wiring Diagram
 
-![Drawing Diagram](/img/Bt-Pico.png)
+![Drawing Diagram](/img/wiring_diagram.png)
 
 ### Working
 
@@ -28,7 +24,7 @@ GPS Tracker updates its location on the website [here](https://mg-lsj.github.io/
 2. Open the `project's scripts` folder in VS Code
 3. Open command pallete by pressing `Ctrl+Shift+P`
 4. Run this command. `Pico-W-Go > Configure Project`
-5. Done.
+5. Update keys in `scripts\config.json`
 
 ### Hardware Checks
 
@@ -46,3 +42,8 @@ Check LEDs on modules to see if modules are working correctly
    - Blink every 3s - Module is connected to a network and can receive/send
 
 Now, run `test_connections.py` to check connections.
+
+### Files Used
+
+1. [micropyGPS](https://github.com/inmcm/micropyGPS/blob/master/micropyGPS.py)
+2. [SIM800l Driver](https://github.com/pythings/Drivers/blob/master/SIM800L.py)
