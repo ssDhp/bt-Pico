@@ -1,7 +1,9 @@
+import utime
 import _thread
 from machine import Pin, UART
 from micropyGPS import MicropyGPS
 from board import pico
+
 
 def networking():
     """
@@ -14,7 +16,7 @@ def networking():
     reqNum = 1  # No of successfull requests made
 
     # Setup SIM module
-    simUART = UART(bus.sim.uart,baudrate=9600, rx=Pin(bus.sim.rx), tx=Pin(bus.sim.tx))
+    simUART = UART(bus.sim.uart, baudrate=9600, rx=Pin(bus.sim.rx), tx=Pin(bus.sim.tx))
     simResetPin = bus.sim.rst
     simModule = Modem(simUART, simResetPin)
     while True:
@@ -38,14 +40,22 @@ def networking():
     # Send loaction to PubNub
     while True:
         url = bus.httpGetUrl()
+        print(f"Lat: {bus.lat}, Lng: {bus.lng}, UTC: {bus.utc}")
         print(f"#{reqNum} GET: {url}")
         # Hold the LED high while making http request
-        bus.LED.high()
-        response = simModule.http_request(url, "GET")
-        bus.LED.low()
-        if response.status_code == 200:
-            reqNum += 1
-            bus.blinkLed()
+        try:
+            bus.LED.high()
+            startTime = utime.time()
+            response = simModule.http_request(url, "GET")
+            print(f"Time taken: {utime.time() - startTime} seconds")
+            bus.LED.low()
+            # Blink if request was successfull
+            if response.status_code == 200:
+                reqNum += 1
+                bus.blinkLed()
+        except Exception as e:
+            print(f"\nError: {e}\n")
+
 
 def main():
     """ 
@@ -53,7 +63,7 @@ def main():
     It reads the sensors and updates the global object
     """
     global bus
-    gpsUART = UART(bus.gps.uart,baudrate=9600 ,rx=Pin(bus.gps.rx), tx=Pin(bus.gps.tx))
+    gpsUART = UART(bus.gps.uart, baudrate=9600, rx=Pin(bus.gps.rx), tx=Pin(bus.gps.tx))
     parser = MicropyGPS()
     while True:
         if gpsUART.any():
@@ -63,17 +73,20 @@ def main():
                         bus.lat = parser.lat
                         bus.lng = parser.lng
                         bus.utc = parser.utc_time
-                    # print(lat,lng, utc)
             except UnicodeError:
                 pass
             except Exception as e:
                 print(e)
 
 
-# Object to store config
-bus = pico()
+if __name__ == "__main__":
+    try:
+        # Object to store config
+        bus = pico()
 
-# Second Thread
-secondThread = _thread.start_new_thread(networking, ())
-# Main Thread
-main()
+        # Second Thread
+        secondThread = _thread.start_new_thread(networking, ())
+        # Main Thread
+        main()
+    except KeyboardInterrupt:
+        pass

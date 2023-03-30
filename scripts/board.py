@@ -55,9 +55,9 @@ class pico():
         payload = f"%7B%22bus%22%3A%22{self.id.busNo}%22%2C%22lat%22%3A{self.lat}%2C%22lng%22%3A{self.lng}%2C%22utc%22%3A{self.utc}%7D"
         return f"http://ps.pndsn.com/publish/{self.pubnub.pk}/{self.pubnub.sk}/0/crash_notification/0/{payload}?uuid={self.id.boardId}"
 
-    def blinkLed(self, delay:float = 0.3 ) -> None:
+    def blinkLed(self, delay:float = 0.1 ) -> None:
         self.LED.toggle()
-        sleep(delay)
+        sleep(delay*2)
         self.LED.toggle()
         sleep(delay)
 
