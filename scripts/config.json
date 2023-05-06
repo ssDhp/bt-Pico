@@ -4,31 +4,31 @@
         "sk": "sub-c-10e0e350-30c8-4f8c-84dc-659f6954424e"
     },
     "id": {
-        "uuid": "pico-mark-4",
+        "uuid": "pico-mark-6",
         "busNo": "D"
     },
     "hardware": {
         "gps": {
             "pin": {
-                "uart": 0,
-                "tx": 0,
-                "rx": 1
+                "uart": 1,
+                "tx": 8,
+                "rx": 9
             }
         },
         "sim": {
             "pin": {
-                "uart": 1,
-                "tx": 8,
-                "rx": 9,
-                "rst": 10,
+                "uart": 0,
+                "tx": 0,
+                "rx": 1,
+                "rst": 2,
                 "baudrate": 9600
             }
         },
         "oled": {
             "pin": {
                 "i2c": 1,
-                "scl": 15,
-                "sda": 14,
+                "scl": 19,
+                "sda": 18,
                 "frequency": 200000
             },
             "resolution": {
