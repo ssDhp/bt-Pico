@@ -1,6 +1,6 @@
 import utime
 import _thread
-from machine import Pin, UART
+from machine import Pin, UART, reset
 from micropyGPS import MicropyGPS
 from board import pico
 
@@ -13,11 +13,12 @@ def networking():
     from sim800l import Modem
 
     global bus
-    reqNum = 1  # No of successfull requests made
+    successfull_requests = 0
+    failed_requests = 0
 
     # Setup SIM module
     simUART = UART(bus.sim.uart, baudrate=9600, rx=Pin(bus.sim.rx), tx=Pin(bus.sim.tx))
-    simResetPin = bus.sim.rst
+    simResetPin = Pin(bus.sim.rst, Pin.IN)
     simModule = Modem(simUART, simResetPin)
     while True:
         try:
@@ -41,7 +42,7 @@ def networking():
     while True:
         url = bus.httpGetUrl()
         print(f"Lat: {bus.lat}, Lng: {bus.lng}, UTC: {bus.utc}")
-        print(f"#{reqNum} GET: {url}")
+        print(f"#{successfull_requests} GET: {url}")
         # Hold the LED high while making http request
         try:
             bus.LED.high()
@@ -51,10 +52,15 @@ def networking():
             bus.LED.low()
             # Blink if request was successfull
             if response.status_code == 200:
-                reqNum += 1
+                successfull_requests += 1
                 bus.blinkLed()
         except Exception as e:
             print(f"\nError: {e}\n")
+            failed_requests += 1
+            if failed_requests > 3:
+                print("Too many failed requests. Reseting!")
+                utime.sleep(1)
+                reset()
 
 
 def main():
