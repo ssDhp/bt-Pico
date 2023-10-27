@@ -1,47 +1,49 @@
 ## bt-Pico - GPS Tracker
 
-
 ![v2 image](/img/imagev2.jpg)
-GPS Tracker updates its location on the website [here](https://mg-lsj.github.io/Bus-Tracker/).
+GPS Tracker updates its location on the website [here](https://bt-p1c0.github.io/BT-Website/).
 
-### Components used:
 
+### Modules used:
+
+- NEO-6M (GPS module): Uses GPS to get module's current location
+- SIM800L (GSM/GPRS module): Publishes location data using PubNub API
 - Raspberry Pi Pico (Microcontroller): Controls other two modules
-- NEO-6M (GPS module): Gets current location
-- SIM800L (GSM/GPRS module): Sends location to the website
+
 
 ### Wiring Diagram
 
 ![Drawing Diagram](/img/wiring_diagram.png)
 
+
 ### Working
 
 ![Working Diagram](/img/working.png)
 
+
+### NOTE
+
+- You need to upload Micropython firmware to Raspberry Pi Pico. Click [here](https://projects.raspberrypi.org/en/projects/getting-started-with-the-pico/3)
+
+
 ### How to setup this project?
 
 1. Install this [extension](https://marketplace.visualstudio.com/items?itemName=paulober.pico-w-go).
-2. Open the `project's scripts` folder in VS Code
+2. Open the project's `scripts` folder in VS Code
 3. Open command pallete by pressing `Ctrl+Shift+P`
-4. Run this command. `Pico-W-Go > Configure Project`
-5. Update keys in `scripts\config.json`
+4. Type and run this command. `Configure Project`
+5. Update keys in Pubnub publish and subscribe keys in `scripts\config.json`
 
-### Hardware Checks
 
-Check LEDs on modules to see if modules are working correctly  
-**NOTE:** Startup process can take upto a minute or more.
+### Uploading and Running Code
 
-1. NEO-6M  
-   This modules takes 30 - 45 seconds to startup in the best case.
-   - No blinking - Searching for satellites
-   - Blink every 1 second - Position fix found (Module can "see" enough satelittes).
-2. SIM800L  
-   For this module startup takes around 30 seconds.
-   - Blink every 1s - Module is seaching for a network
-   - Blink every 2s - Data connection is active
-   - Blink every 3s - Module is connected to a network and can receive/send
+- Uploading Code 
+   1. Connect Raspberry Pi Pico to your computer using a USB cable
+   2. Open command pallete by pressing `Ctrl+Shift+P` and Run `Upload project to Pico` command.
 
-Now, run `test_connections.py` to check connections.
+- Running Code
+   1. Open command pallete by pressing `Ctrl+Shift+P` and Run `Reset > Soft(Listen)` command.
+
 
 ### Files Used
 

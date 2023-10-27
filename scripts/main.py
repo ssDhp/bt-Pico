@@ -10,7 +10,7 @@ def networking():
     Network thread which runs on the second core of Pico. \n
     It handles communication with PubNub to update location data.
     """
-    from sim800l import Modem
+    from SIM800L import Modem
 
     global bus
     successfull_requests = 0

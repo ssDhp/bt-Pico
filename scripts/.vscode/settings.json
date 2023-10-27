@@ -6,8 +6,12 @@
     "python.languageServer": "Pylance",
     "python.analysis.typeCheckingMode": "off",
     "python.analysis.extraPaths": [
-        ".vscode\\Pico-W-Stub\\stubs"
+        ".vscode\\Pico-W-Stub\\stubs",
+        ".vscode\\Pico-W-Stub"
     ],
     "micropico.syncFolder": "",
-    "micropico.openOnStart": false
+    "micropico.openOnStart": false,
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportMissingModuleSource": "none"
+    }
 }
