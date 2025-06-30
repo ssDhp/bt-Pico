@@ -1,0 +1,25 @@
+{
+    "device_name": "Prototype Tracker",
+    "firmware_version": 0.1,
+    "hardware_revision": 0.1,
+    "modules": [
+        {
+            "type": "GPS",
+            "name": "NEO6M",
+            "uart_id": 0,
+            "tx": 0,
+            "rx": 1,
+            "reset_pin": -1,
+            "baudrate": 115200
+        },
+        {
+            "type": "SIM",
+            "name": "SIM800L",
+            "uart_id": 1,
+            "tx": 8,
+            "rx": 9,
+            "reset_pin": 10,
+            "baudrate": 115200
+        }
+    ]
+}
